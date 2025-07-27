@@ -1,0 +1,17 @@
+[project]
+name = "feed-service"
+version = "0.1.0"
+description = "The project includes a feed service that provides a REST API for managing feeds. It allows users to create, read, update, and delete feeds, as well as manage feed items. Fanout is used to distribute feed updates to multiple subscribers."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aioredis>=2.0.1",
+    "fastapi>=0.116.1",
+    "locust>=2.37.14",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "pytest>=8.4.1",
+    "sentry-sdk>=2.33.2",
+    "sqlmodel>=0.0.24",
+    "uvicorn>=0.35.0",
+]
