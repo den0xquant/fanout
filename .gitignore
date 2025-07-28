@@ -19,3 +19,5 @@ wheels/
 
 redis_data/
 db_data/
+
+*_cache

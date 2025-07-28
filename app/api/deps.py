@@ -6,13 +6,16 @@ from pydantic import ValidationError
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Session
 
-from fastapi import Depends
+from fastapi import Depends, Query
 from fastapi import HTTPException, status
 
 from app.core.config import settings
 from app.core.db import engine
 from app.core.security import ALGORITHM
-from app.models import User, TokenPayload
+from app.models import User, TokenPayload, Pagination
+
+
+PaginationDependency = Annotated[Pagination, Query()] 
 
 
 def get_session():

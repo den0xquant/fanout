@@ -9,6 +9,8 @@ services:
       redis:
         condition: service_healthy
         restart: true
+    volumes:
+      - ./alembic:/code/alembic
     env_file:
       - .env
     environment:
@@ -54,7 +56,7 @@ services:
       start_period: 30s
       timeout: 10s
     volumes:
-      - db_data:/var/lib/postgresql/data/pgdata
+      - ./db_data:/var/lib/postgresql/data/pgdata
     env_file: .env
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
@@ -72,7 +74,7 @@ services:
       retries: 5
       start_period: 10s
     volumes:
-      - redis_data:/data
+      - ./redis_data:/data
 
 
 volumes:

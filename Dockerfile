@@ -1,8 +1,7 @@
-FROM python:3.12-slim
+FROM python:3.12
 
 ENV PYTHONUNBUFFERED=1
 
-# Set the working directory
 WORKDIR /code/
 
 COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /uvx /bin/
@@ -29,5 +28,4 @@ COPY ./app /code/app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-# Command to run the application
-CMD ["fastapi", "run", "--workers", "4", "app/main.py"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

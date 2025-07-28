@@ -17,6 +17,7 @@ dependencies = [
     "pydantic-settings>=2.10.1",
     "pyjwt>=2.10.1",
     "pytest>=8.4.1",
+    "redis>=6.2.0",
     "ruff>=0.12.5",
     "sentry-sdk>=2.33.2",
     "sqlmodel>=0.0.24",

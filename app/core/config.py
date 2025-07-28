@@ -73,6 +73,11 @@ class Settings(BaseSettings):
                 warnings.warn(message, stacklevel=1)
             else:
                 raise ValueError(message)
+    
+    @computed_field
+    @property
+    def REDIS_URI(self) -> str:
+        return 'redis://redis:6379'
 
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:
