@@ -61,7 +61,7 @@ class Settings(BaseSettings):
             host=self.POSTGRES_SERVER,
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
-        )  # type: ignore[prop-decorator]
+        )  # type: ignore
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
