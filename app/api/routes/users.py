@@ -22,3 +22,8 @@ def create_user(*, session: SessionDependency, user_data: UserCreate) -> UserPub
     """
     
     return users.create_user(session=session, user_data=user_data)
+
+
+@router.get("/{user_id}", summary="Get an user by id")
+def get_user(*, session: SessionDependency, user_id) -> UserPublic:
+    return users.get_user_by_id(session=session, user_id=user_id)

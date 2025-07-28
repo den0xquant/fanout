@@ -1,11 +1,13 @@
 import uuid
+from typing import cast
 
 from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload, QueryableAttribute
 
 from app.core.security import get_password_hash
 from app.models import User, UserCreate, UserPublic
-from app.exceptions import UserAlreadyExistsError
+from app.exceptions import UserAlreadyExistsError, UserNotFound
 
 
 def create_user(*, session: Session, user_data: UserCreate) -> UserPublic:
@@ -31,11 +33,11 @@ def create_user(*, session: Session, user_data: UserCreate) -> UserPublic:
         session.commit()
         session.refresh(db_user)
     except IntegrityError:
-        raise UserAlreadyExistsError
+        raise UserAlreadyExistsError()
     return UserPublic.model_validate(db_user)
 
 
-def get_user_by_id(session: Session, user_id: uuid.UUID) -> UserPublic | None:
+def get_user_by_id(*, session: Session, user_id: uuid.UUID) -> UserPublic:
     """
     Get a user by their ID.
 
@@ -46,8 +48,12 @@ def get_user_by_id(session: Session, user_id: uuid.UUID) -> UserPublic | None:
     Returns:
         UserPublic | None: The user if found, otherwise None.
     """
-    statement = select(User).where(User.id == user_id)
+    statement = select(User).options(
+        selectinload(cast(QueryableAttribute, User.followers)),
+        selectinload(cast(QueryableAttribute, User.followees)),
+    ).where(User.id == user_id)
+
     db_user = session.exec(statement).first()
     if not db_user:
-        return None
-    return UserPublic.model_validate(db_user)
+        raise UserNotFound()
+    return UserPublic.model_validate(db_user, from_attributes=True)
