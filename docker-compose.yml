@@ -34,6 +34,16 @@ services:
     ports:
       - "${BACKEND_PORT:-8000}:8000"
 
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - ./adminer/adminer.css:/var/www/html/adminer.css
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+
   db:
     image: postgres:17
     restart: always
