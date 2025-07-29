@@ -6,17 +6,17 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload, QueryableAttribute
 
 from app.core.security import get_password_hash
-from app.models import User, UserCreate, UserPublic
+from app.models import User, UserRegister, UserPublic
 from app.exceptions import UserAlreadyExistsError, UserNotFound
 
 
-def create_user(*, session: Session, user_data: UserCreate) -> UserPublic:
+def create_user(*, session: Session, user_data: UserRegister) -> UserPublic:
     """
     Create a new user in the database.
 
     Args:
         session (Session): The database session.
-        user (UserCreate): The user data to create.
+        user (UserRegister): The user data to create.
 
     Returns:
         UserPublic: The created user.
@@ -48,10 +48,14 @@ def get_user_by_id(*, session: Session, user_id: uuid.UUID) -> UserPublic:
     Returns:
         UserPublic | None: The user if found, otherwise None.
     """
-    statement = select(User).options(
-        selectinload(cast(QueryableAttribute, User.followers)),
-        selectinload(cast(QueryableAttribute, User.followees)),
-    ).where(User.id == user_id)
+    statement = (
+        select(User)
+        .options(
+            selectinload(cast(QueryableAttribute, User.followers)),
+            selectinload(cast(QueryableAttribute, User.followees)),
+        )
+        .where(User.id == user_id)
+    )
 
     db_user = session.exec(statement).first()
     if not db_user:

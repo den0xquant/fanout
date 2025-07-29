@@ -1,3 +1,4 @@
+import json
 from typing import Sequence
 from sqlmodel import Session, select
 
@@ -10,14 +11,10 @@ from app.models import (
     Follows,
     Pagination,
 )
-from app.services.fanout import fanout_to_followers
 
 
 def create_tweet(
-    *,
-    session: Session,
-    current_user: User,
-    tweet_data: TweetCreate
+    *, session: Session, current_user: User, tweet_data: TweetCreate
 ) -> TweetPublic:
     """
     Create a new tweet.
@@ -34,12 +31,12 @@ def create_tweet(
     session.add(tweet)
     session.commit()
     session.refresh(tweet)
-    tweet_to_return = TweetPublic.model_validate(tweet)
-    fanout_to_followers(session=session, tweet=tweet_to_return)
-    return tweet_to_return
+    return TweetPublic.model_validate(tweet)
 
 
-def get_followees_tweets_db(*, session: Session, current_user: User, pagination: Pagination) -> Sequence[Tweet]:
+def get_followees_tweets_db(
+    *, session: Session, current_user: User, pagination: Pagination
+) -> Sequence[Tweet]:
     """Fetches tweets from users that the current user is following.
 
     Args:
@@ -52,8 +49,8 @@ def get_followees_tweets_db(*, session: Session, current_user: User, pagination:
     """
     statement = (
         select(Tweet)
-        .join(User, Tweet.owner_id == User.id) # pyright: ignore[reportArgumentType]
-        .join(Follows, Follows.followee_id == User.id) # pyright: ignore[reportArgumentType]
+        .join(User, Tweet.owner_id == User.id)  # pyright: ignore[reportArgumentType]
+        .join(Follows, Follows.followee_id == User.id)  # pyright: ignore[reportArgumentType]
         .where(Follows.follower_id == current_user.id)
         .limit(pagination.limit)
         .offset(pagination.offset)
@@ -61,16 +58,19 @@ def get_followees_tweets_db(*, session: Session, current_user: User, pagination:
     return session.exec(statement).all()
 
 
-def get_followees_tweets_cache(*, session: Session, current_user: User, pagination: Pagination):
+def get_followees_tweets_cache(*, current_user: User, pagination: Pagination) -> list[TweetPublic]:
     """Fetches tweets from users that the current user is following.
 
     Args:
-        session (Session): _description_
-        current_user (User): _description_
-        pagination (Pagination): _description_
+        current_user (User): The user for which to fetch the tweets timeline.
+        pagination (Pagination): The limit and offset values.
 
     Returns:
-        Sequence[Tweet]: _description_
+        Sequence[TweetPublic]: Serializer tweets from Redis cache.
     """
-    tweets = redis_instance.lrange(f"tweets:{current_user.id}", pagination.offset, pagination.offset + pagination.limit - 1)
-    print(tweets)
+    tweets = redis_instance.lrange(
+        name=f"tweets:{current_user.id}",
+        start=pagination.offset,
+        end=pagination.offset + pagination.limit - 1,
+    )
+    return [TweetPublic(**json.loads(tweet)) for tweet in tweets] if tweets else []  # type: ignore

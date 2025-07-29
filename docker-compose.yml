@@ -27,7 +27,7 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
-      interval: 10s
+      interval: 100s
       timeout: 5s
       retries: 5
     build:

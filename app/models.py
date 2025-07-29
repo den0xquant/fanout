@@ -21,8 +21,12 @@ class UserRegister(SQLModel):
 
 
 class Follows(SQLModel, table=True):
-    followee_id: uuid.UUID | None = Field(default=None, foreign_key="user.id", primary_key=True)
-    follower_id: uuid.UUID | None = Field(default=None, foreign_key="user.id", primary_key=True)
+    followee_id: uuid.UUID | None = Field(
+        default=None, foreign_key="user.id", primary_key=True
+    )
+    follower_id: uuid.UUID | None = Field(
+        default=None, foreign_key="user.id", primary_key=True
+    )
 
 
 # Database model for User
@@ -36,7 +40,7 @@ class User(UserBase, table=True):
         sa_relationship_kwargs=dict(
             primaryjoin="User.id==Follows.followee_id",
             secondaryjoin="User.id==Follows.follower_id",
-        )
+        ),
     )
     followees: list["User"] = Relationship(
         back_populates="followers",
@@ -44,7 +48,7 @@ class User(UserBase, table=True):
         sa_relationship_kwargs=dict(
             primaryjoin="User.id==Follows.follower_id",
             secondaryjoin="User.id==Follows.followee_id",
-        )
+        ),
     )
 
 
@@ -75,7 +79,9 @@ class TweetCreate(TweetBase):
 
 class Tweet(TweetBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    owner_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
+    owner_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, ondelete="CASCADE"
+    )
     owner: User = Relationship(back_populates="tweets")
 
 
