@@ -15,7 +15,7 @@ from app.core.security import ALGORITHM
 from app.models import User, TokenPayload, Pagination
 
 
-PaginationDependency = Annotated[Pagination, Query()] 
+PaginationDependency = Annotated[Pagination, Query()]
 
 
 def get_session():
@@ -27,7 +27,6 @@ def get_session():
     """
     with Session(engine) as session:
         yield session
-
 
 
 reusable_oauth2 = OAuth2PasswordBearer(

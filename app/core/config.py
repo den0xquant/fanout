@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     @property
     def all_cors_origins(self) -> list[str]:
         return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS]
-    
+
     PROJECT_NAME: str
     SENTRY_DSN: str | None = None
     POSTGRES_SERVER: str
@@ -73,11 +73,11 @@ class Settings(BaseSettings):
                 warnings.warn(message, stacklevel=1)
             else:
                 raise ValueError(message)
-    
+
     @computed_field
     @property
     def REDIS_URI(self) -> str:
-        return 'redis://redis:6379'
+        return "redis://redis:6379"
 
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:

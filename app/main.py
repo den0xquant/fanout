@@ -1,10 +1,11 @@
 import sentry_sdk
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 
 from app.core.config import settings
-from app.api import api_router
+from app.api.main import api_router
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -35,6 +36,6 @@ def create_app() -> FastAPI:
         )
     app.include_router(api_router, prefix=settings.API_V1_STR)
     return app
- 
+
 
 app = create_app()

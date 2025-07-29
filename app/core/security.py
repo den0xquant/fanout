@@ -23,7 +23,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         bool: True if the passwords match, False otherwise.
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    # return pwd_context.verify(plain_password, hashed_password)
+    return plain_password == hashed_password
 
 
 def get_password_hash(password: str) -> str:
@@ -36,7 +37,8 @@ def get_password_hash(password: str) -> str:
     Returns:
         str: The hashed password.
     """
-    return pwd_context.hash(password)
+    # return pwd_context.hash(password)  # Uncomment this line when you want to use bcrypt
+    return password
 
 
 def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
