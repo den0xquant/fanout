@@ -52,6 +52,10 @@ class User(UserBase, table=True):
     )
 
 
+class UserId(SQLModel):
+    id: uuid.UUID
+
+
 class UserPublicShort(SQLModel):
     id: uuid.UUID
     username: str
@@ -104,5 +108,5 @@ class Token(SQLModel):
 
 
 class Pagination(SQLModel):
-    limit: int = Field(100, gt=0, le=100)
+    limit: int = Field(10, gt=0, le=100)
     offset: int = Field(0, ge=0)

@@ -10,24 +10,12 @@ from fastapi import Depends, Query
 from fastapi import HTTPException, status
 
 from app.core.config import settings
-from app.core.db import engine
+from app.core.db import get_session
 from app.core.security import ALGORITHM
 from app.models import User, TokenPayload, Pagination
 
 
 PaginationDependency = Annotated[Pagination, Query()]
-
-
-def get_session():
-    """
-    Create a new SQLAlchemy session.
-
-    Returns:
-        Session: A new SQLAlchemy session.
-    """
-    with Session(engine) as session:
-        yield session
-
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login/access-token"
@@ -47,8 +35,6 @@ def get_current_user(session: SessionDependency, token: TokenDependency) -> User
     Returns:
         User: The current user.
     """
-    # Logic to retrieve the current user from the session
-    # This is a placeholder and should be replaced with actual logic
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         token_data = TokenPayload(**payload)
