@@ -84,6 +84,8 @@ class Settings(BaseSettings):
         self._check_default_secret("SECRET_KEY", self.SECRET_KEY)
         self._check_default_secret("POSTGRES_PASSWORD", self.POSTGRES_PASSWORD)
         return self
+    
+    FEED_CACHE_SIZE: int = 10
 
 
 settings = Settings()  # type: ignore

@@ -6,8 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload, QueryableAttribute
 
 from app.core.security import get_password_hash
-from app.models import User, UserRegister, UserPublic
-from app.exceptions import UserAlreadyExistsError, UserNotFound
+from app.models import User, UserRegister, UserPublic, Follows
+from app.services.exceptions import UserAlreadyExistsError, UserNotFound
 
 
 def create_user(*, session: Session, user_data: UserRegister) -> UserPublic:
@@ -60,4 +60,23 @@ def get_user_by_id(*, session: Session, user_id: uuid.UUID) -> UserPublic:
     db_user = session.exec(statement).first()
     if not db_user:
         raise UserNotFound()
-    return UserPublic.model_validate(db_user, from_attributes=True)
+    return UserPublic.model_validate(db_user)
+
+
+def follow(*, session: Session, followee_id: uuid.UUID, follower_id: uuid.UUID) -> str:
+    """Insert ids into Follows table
+
+    Args:
+        session (Session): db session
+        followee_id (uuid.UUID): user_id (target)
+        follower_id (uuid.UUID): user_id (who follows)
+
+    Returns:
+        str: "OK"
+    """
+    statement = select(Follows).where(Follows.followee_id == followee_id, Follows.follower_id == follower_id)
+    db_object = session.exec(statement).first()
+    if not db_object:
+        session.add(Follows(followee_id=followee_id, follower_id=follower_id))
+        session.commit()
+    return "OK"

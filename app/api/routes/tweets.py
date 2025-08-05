@@ -67,7 +67,7 @@ def get_tweets_from_db(
     summary="Get tweets of the user's followees",
 )
 def get_tweets_from_cache(
-    *, current_user: CurrentUserDependency, pagination: PaginationDependency
+    *, current_user: CurrentUserDependency
 ):
     """Gets tweets from cache
 
@@ -79,5 +79,5 @@ def get_tweets_from_cache(
         list[TweetPublic]: Timeline of tweets from cache.
     """
     return tweets.get_followees_tweets_cache(
-        current_user=current_user, pagination=pagination
+        current_user=current_user
     )

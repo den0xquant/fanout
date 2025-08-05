@@ -3,6 +3,7 @@ from typing import Sequence
 from sqlmodel import Session, select
 
 from app.core.cache import redis_instance
+from app.core.config import settings
 from app.models import (
     Tweet,
     TweetCreate,
@@ -58,7 +59,7 @@ def get_followees_tweets_db(
     return session.exec(statement).all()
 
 
-def get_followees_tweets_cache(*, current_user: User, pagination: Pagination) -> list[TweetPublic]:
+def get_followees_tweets_cache(*, current_user: User) -> list[TweetPublic]:
     """Fetches tweets from users that the current user is following.
 
     Args:
@@ -69,8 +70,6 @@ def get_followees_tweets_cache(*, current_user: User, pagination: Pagination) ->
         Sequence[TweetPublic]: Serializer tweets from Redis cache.
     """
     tweets = redis_instance.lrange(
-        name=f"tweets:{current_user.id}",
-        start=pagination.offset,
-        end=pagination.offset + pagination.limit - 1,
+        name=f"tweets:{current_user.id}", start=0, end=settings.FEED_CACHE_SIZE
     )
     return [TweetPublic(**json.loads(tweet)) for tweet in tweets] if tweets else []  # type: ignore

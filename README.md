@@ -5,7 +5,7 @@ Based on the **Twitter timeline** example from _Designing Data-Intensive Applica
 
 ## Goals
 
-- Understand the **fan-out on write** and **fan-out on read** strategies.
+- Understand the **fan-out on write** strategy.
 - Reproduce and experiment with the Twitter-style timeline model.
 - Practice working with denormalized data, eventual consistency, and feed generation.
 
@@ -15,16 +15,15 @@ Based on the **Twitter timeline** example from _Designing Data-Intensive Applica
 - **FastAPI** — API framework
 - **PostgreSQL** — primary datastore
 - **Redis** — fanout queue / pub-sub
-- **Celery** — background fanout processing
+- **FastAPI Background tasks** — background fanout processing
 - **Docker** — containerized setup
 
 ## Concepts implemented
 
-- User follows / unfollows
+- Users can login using username and password
 - Users can post "tweets"
 - Timeline is either:
   - **Fan-out on write**: push tweets to followers’ feeds at post time
-  - **Fan-out on read**: fetch tweets from followees at read time
 - Asynchronous background workers for fan-out processing
 
 ## Project Status
